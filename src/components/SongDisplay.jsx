@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { nextLyric, restartSong } from './../actions';
 import { connect } from 'react-redux';
 
 const SongDisplay = ({ dispatch, song }) => {
@@ -14,19 +15,13 @@ const SongDisplay = ({ dispatch, song }) => {
       <div onClick={e => {
         e.preventDefault();
         if(!(arrayPosition === songArray.length - 1)) {
-          action = {
-            type: 'NEXT_LYRIC',
-            currentSongId: id
-          };
-          dispatch(action);
+          dispatch(nextLyric(id));
         } else {
-          action = {
-            type: 'RESTART_SONG',
-            currentSongId: id
+          dispatch(restartSong(id));
           };
           dispatch(action);
         }
-      }}>
+      }>
         <h1>
           {currentLine}
         </h1>
@@ -46,16 +41,26 @@ SongDisplay.propTypes = {
 };
 
 const mapStateToProps = state => {
+  let info;
   const song = state.songsById[state.currentSongId];
-  const songInfo = {
+  if (!state.songsById[state.currentSongId].isFetching){
+  info = {
     id: song.songId,
     artist: song.artist,
     title: song.title,
     songArray: song.songArray,
     arrayPosition: song.arrayPosition
   };
+} else {
+  info = {
+  artist: '',
+  title: '',
+  songArray: '',
+  arrayPosition: ''
+  };
+}
   return {
-    song: songInfo
+    song: info
   };
 };
 
